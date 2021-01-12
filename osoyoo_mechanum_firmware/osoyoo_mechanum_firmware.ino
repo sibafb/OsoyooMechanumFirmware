@@ -9,10 +9,20 @@
 */
 
 #include <ros.h>
+#include <std_msgs/Empty.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float32MultiArray.h>
 
 ros::NodeHandle nh;
-ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &messageCb);
+
+// Setup subscribers
+ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", &cmdVelCallback);
+ros::Subscriber<geometry_msgs::Twist> cmd_ultrasonic_scan("cmd_ultrasonic_scan", &cmdUltrasonicScanCallback);
+
+// Setup publishers
+
+
+ros::Publisher us_scan_data = nh.advertise<std_msgs::Float32MultiArray>("ultrasonic_scan_data", 30);
 
 #include "src/lib/pinAssignment.h"
 #include "src/lib/debugPrint.h"
@@ -23,7 +33,7 @@ ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &messageCb);
 
 #include "src/functionsApi/functionsApi.h"
 
-void messageCb(const geometry_msgs::Twist& twist) {
+void cmdVelCallback(const geometry_msgs::Twist& twist) {
   const float linear_x = twist.linear.x;
   const float angle_z = twist.angular.z;
   if (linear_x > 0.0 && angle_z == 0.0) {
@@ -62,6 +72,21 @@ void messageCb(const geometry_msgs::Twist& twist) {
   }
 }
 
+void cmdUltrasonicScanCallback(const std_msgs::Empty& msg)
+{
+  watchSurroundTest();
+  std_msgs::Float32MultiArray distanceArray;
+  distanceArray.data.resize(9);
+  for (int i = 0;i<9 ;i++){
+    
+
+  }
+}
+
+void update()
+{
+  //定期実行処理を記載
+}
 void setup() {
     /* motor initilize */
     motorInitialize();
