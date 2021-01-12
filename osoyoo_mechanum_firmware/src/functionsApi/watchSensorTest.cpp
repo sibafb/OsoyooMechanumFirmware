@@ -29,12 +29,11 @@ typedef struct {
 }SCAN_DATA;
 
 static int servoPosition = 90;
+static const int AREA_DIVISION = 9;
+static SCAN_DATA ScanArray[AREA_DIVISION];
 void watchSurroundTest(){
   /*0,20,40,60,80,100,120,140,160*/
-  const int AREA_DIVISION = 9;
-
   /* init */
-  SCAN_DATA ScanArray[AREA_DIVISION];
   ScanArray[0].AREA = 10; 
   for(int i=0; i < AREA_DIVISION;i++){
     ScanArray[i].AREA = ScanArray[0].AREA + i*20;//by 20 degree.
@@ -64,5 +63,12 @@ void watchSurroundTest(){
   DebugLogPrintln("]R");
 }
 
+
+int getWatchSurroundData(int index){
+  if(index < 0 || index > AREA_DIVISION - 1){
+    return 0;
+  }
+  return ScanArray[index];
+}
 
 
