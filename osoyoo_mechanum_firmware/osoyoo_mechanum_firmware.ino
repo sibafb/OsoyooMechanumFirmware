@@ -17,10 +17,9 @@ ros::NodeHandle nh;
 
 // Setup subscribers
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", &cmdVelCallback);
-ros::Subscriber<geometry_msgs::Twist> cmd_ultrasonic_scan("cmd_ultrasonic_scan", &cmdUltrasonicScanCallback);
+//ros::Subscriber<geometry_msgs::Twist> cmd_ultrasonic_scan("cmd_ultrasonic_scan", &cmdUltrasonicScanCallback);
 
 // Setup publishers
-
 
 ros::Publisher us_scan_data = nh.advertise<std_msgs::Float32MultiArray>("ultrasonic_scan_data", 30);
 
@@ -72,15 +71,22 @@ void cmdVelCallback(const geometry_msgs::Twist& twist) {
   }
 }
 
-void cmdUltrasonicScanCallback(const std_msgs::Empty& msg)
+//void cmdUltrasonicScanCallback(const std_msgs::Empty& msg)
+void ultrasonicScanPublish()
 {
   watchSurroundTest();
   std_msgs::Float32MultiArray distanceArray;
-  distanceArray.data.resize(9);
-  for (int i = 0;i<9 ;i++){
-    
+  distanceArray.data.resize(getWatchSurroundDataSize());
 
+  //scan
+  void watchNextAreaDistance();
+  //publish
+  for (int i = 0; i < getWatchSurroundDataSize() ; i++){
+      distanceArray.data[i] = getWatchSurroundData(i);
   }
+
+  us_scan_data.publish(distanceArray);
+  ROS_INFO("Published Distance!");
 }
 
 void update()
@@ -106,9 +112,16 @@ void setup() {
  
 }
 
+long publisher_timer;
+
 void loop() {
    // autoAvoidance();
     // Serial.println( watchsurrounding());
+    if (millis() > publisher_timer){
+      ultrasonicScanPublish();
+      publisher_timer = millis() + 400;//publish 10 times a second.
+    }
+    
     nh.spinOnce();
     delay(1);
 }

@@ -63,7 +63,6 @@ void watchSurroundTest(){
   DebugLogPrintln("]R");
 }
 
-
 int getWatchSurroundData(int index){
   if(index < 0 || index > AREA_DIVISION - 1){
     return 0;
@@ -71,4 +70,40 @@ int getWatchSurroundData(int index){
   return ScanArray[index];
 }
 
+int getWatchSurroundDataSize(){
+  return AREA_DIVISION;
+}
 
+void watchNextAreaDistance(){
+  int index = swingIndex();
+
+  servoSmoothWrite(ScanArray[index].AREA,5,1);
+  delay(20);
+  ScanArray[index].VALUE = ultraSonicSensorWatch();//by  degree.
+  delay(20);
+}
+
+static int swingDirection = 0;
+static int areaIndex = 0;
+int swingIndex(){
+  if(swingDirection == 0){
+    swingDirection = 1;
+    areaIndex = 0;
+  }
+  if(swingDirection == 1){
+    areaIndex++;
+
+    if(areaIndex == AREA_DIVISION - 1){
+       swingDirection = -1;
+    }
+  }
+  if(swingDirection == -1){
+    areaIndex--;
+
+    if(areaIndex == 0){
+       swingDirection = 1;
+    }
+  }
+
+  return areaIndex
+}
