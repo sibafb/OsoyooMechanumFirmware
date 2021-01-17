@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
+project(osoyoo_mechanum_bringup)
 
-include_directories(${ROS_LIB_DIR})
+find_package(catkin REQUIRED)
 
-# Remove this if using an Arduino without native USB (eg, other than Leonardo)
-add_definitions(-DUSB_CON)
+catkin_package()
 
-generate_arduino_firmware(hello
-  SRCS OsoyooMechanumFirmware.cpp ${ROS_LIB_DIR}/time.cpp
-  BOARD mega2560
-  PORT /dev/ttyACM0
+install(DIRECTORY config launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  PATTERN ".svn" EXCLUDE
 )
